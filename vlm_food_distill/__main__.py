@@ -134,6 +134,30 @@ def cmd_eval(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_plot(args: argparse.Namespace) -> int:
+    from .plots import plot_confusion_matrix, plot_teacher_examples
+
+    cfg = load_config(args.config)
+    classes = _resolved(cfg, args.data_root)
+    scfg = cfg["student"]
+    out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    test_items = data_mod.list_items(args.data_root, "test", classes,
+                                     cfg["max_test_per_class"])
+    cm_path = out_dir / "confusion_matrix.png"
+    plot_confusion_matrix(args.student, test_items, classes,
+                          int(scfg.get("img_size", 224)),
+                          int(scfg.get("batch_size", 64)), cm_path, args.device)
+    print(f"Confusion matrix -> {cm_path}")
+
+    if args.labels and Path(args.labels).exists():
+        ex_path = out_dir / "teacher_vs_truth.png"
+        plot_teacher_examples(args.labels, ex_path)
+        print(f"Teacher-vs-truth examples -> {ex_path}")
+    return 0
+
+
 def cmd_report(args: argparse.Namespace) -> int:
     results = json.loads(Path(args.results).read_text())
     print(render_report(results))
@@ -178,6 +202,15 @@ def main() -> int:
                    help="Also run the VLM teacher zero-shot on the test split.")
     s.add_argument("--out", default="runs/results.json")
     s.set_defaults(func=cmd_eval)
+
+    s = sub.add_parser("plot", help="Save confusion matrix + teacher-vs-truth figures.")
+    s.add_argument("--config", required=True)
+    s.add_argument("--data-root", default="./data")
+    s.add_argument("--student", required=True)
+    s.add_argument("--labels", default="runs/pseudo_labels.csv",
+                   help="Pseudo-label CSV for the teacher-vs-truth examples.")
+    s.add_argument("--out-dir", default="assets")
+    s.set_defaults(func=cmd_plot)
 
     s = sub.add_parser("report", help="Print the Markdown results table.")
     s.add_argument("--results", default="runs/results.json")

@@ -6,6 +6,7 @@ numpy>=1.24
 pillow>=10.0
 pyyaml>=6.0
 tqdm>=4.66
+matplotlib>=3.7
 
 # Vision-language teacher (Qwen2-VL via Hugging Face Transformers)
 transformers>=4.45

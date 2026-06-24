@@ -62,6 +62,22 @@ then `python -m vlm_food_distill report` to regenerate the table.
   *quality*, and an open VLM supplied that quality for free. The lever for closing
   the remaining gap is student capacity / training budget, not better labels.
 
+### Figures
+
+| Distilled student — confusion matrix | Teacher pseudo-label vs ground truth |
+|---|---|
+| ![Confusion matrix](assets/confusion_matrix.png) | ![Teacher vs truth examples](assets/teacher_vs_truth.png) |
+
+Regenerate with:
+
+```bash
+python -m vlm_food_distill plot --config configs/subset20.yaml --data-root ./data \
+    --student runs/student.pt --labels runs/pseudo_labels.csv --out-dir assets
+```
+
+(The example grid intentionally mixes correct (green) and incorrect (red) teacher
+calls so the pseudo-label noise is visible rather than cherry-picked.)
+
 ## Pipeline
 
 ```
@@ -103,6 +119,10 @@ python -m vlm_food_distill eval --config configs/subset20.yaml --data-root ./dat
     --student runs/student.pt --labels runs/pseudo_labels.csv --out runs/results.json
 
 python -m vlm_food_distill report --results runs/results.json
+
+# 5. (optional) Save the confusion matrix + teacher-vs-truth figures to assets/
+python -m vlm_food_distill plot --config configs/subset20.yaml --data-root ./data \
+    --student runs/student.pt --labels runs/pseudo_labels.csv --out-dir assets
 ```
 
 ## Configuration
