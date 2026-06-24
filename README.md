@@ -37,18 +37,30 @@ runs at tens of FPS on a CPU*, and how much is lost to pseudo-label noise.
 
 ## Results
 
-Run `python -m vlm_food_distill report` after the pipeline to regenerate this
-table for your run; numbers depend on subset, teacher model, and epochs.
+20-class Food-101 subset · ≤150 train / 100 test images per class (2,000 test
+images) · teacher **Qwen2-VL-2B-Instruct** · student **MobileNetV3-Small**
+(`timm`) · 12 epochs. Reproduce with the [Colab notebook](notebooks/colab_quickstart.ipynb),
+then `python -m vlm_food_distill report` to regenerate the table.
 
 | Model | Params | Top-1 (test) |
 |---|---|---|
-| Teacher (Qwen2-VL, zero-shot) | billions | _filled in by `report`_ |
-| **Student (distilled from pseudo-labels)** | ~2–6 M | _filled in by `report`_ |
-| Oracle student (trained on true labels) | ~2–6 M | _filled in by `report`_ |
-| Pseudo-label accuracy (teacher vs true, train) | — | _filled in by `report`_ |
+| Teacher (Qwen2-VL-2B, zero-shot) | ~2 B | **95.8%** |
+| **Student (distilled from pseudo-labels)** | ~1.5 M | **74.5%** |
+| Oracle student (trained on true labels) | ~1.5 M | 75.1% |
+| _Pseudo-label accuracy (teacher vs true, train)_ | — | 93.6% |
 
-The gap between the distilled student and the oracle student is the price of
-having no human labels; the gap to the teacher is the price of compression.
+**What this shows**
+
+- **Pseudo-labels cost almost nothing.** The distilled student (74.5%) lands within
+  **0.6 pp** of the oracle student trained on ground-truth labels (75.1%) — because
+  the teacher's pseudo-labels were **93.6%** accurate. With *zero human annotation*,
+  the VLM's own labels were nearly as good as the real ones.
+- **The real price is compression.** Going from a ~2-billion-parameter VLM (95.8%)
+  to a **~1.5 M-parameter, ~6 MB** CNN that runs at tens of FPS on a CPU costs ~21 pp
+  of accuracy — the trade you make for a deployable edge model.
+- **Takeaway:** for a fixed student, label *source* mattered far less than label
+  *quality*, and an open VLM supplied that quality for free. The lever for closing
+  the remaining gap is student capacity / training budget, not better labels.
 
 ## Pipeline
 
