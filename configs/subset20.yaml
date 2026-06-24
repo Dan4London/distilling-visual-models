@@ -1,0 +1,44 @@
+# 20-class Food-101 subset for a fast, free Colab run.
+# Leave `classes: []` to use all 101 Food-101 classes (longer run).
+classes:
+  - apple_pie
+  - caesar_salad
+  - cheesecake
+  - chicken_wings
+  - chocolate_cake
+  - donuts
+  - dumplings
+  - french_fries
+  - fried_rice
+  - hamburger
+  - hot_dog
+  - ice_cream
+  - lasagna
+  - macarons
+  - omelette
+  - pancakes
+  - pizza
+  - ramen
+  - steak
+  - sushi
+
+# Cap images per class to keep teacher labelling fast on the free tier.
+# Set to null to use the full Food-101 split (750 train / 250 test per class).
+max_train_per_class: 150
+max_test_per_class: 100
+
+teacher:
+  model_id: "Qwen/Qwen2-VL-2B-Instruct"
+  max_new_tokens: 24
+  batch_log_every: 25
+
+student:
+  arch: "mobilenetv3_small_100"   # any timm model id; small + fast on CPU
+  img_size: 224
+  epochs: 12
+  batch_size: 64
+  lr: 0.0008
+  weight_decay: 0.05
+  label_smoothing: 0.1
+  num_workers: 2
+  seed: 42

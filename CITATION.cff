@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Distilling a Vision-Language Model into a Compact Food Classifier"
+abstract: >-
+  A reproducible study of vision-language-model-as-annotator knowledge
+  distillation: an open VLM (Qwen2-VL) pseudo-labels Food-101 images, a compact
+  CNN student is trained on those labels only, and accuracy is evaluated against
+  the teacher and an oracle student trained on ground-truth labels.
+authors:
+  - family-names: "Dan4London"
+    given-names: ""
+keywords:
+  - knowledge distillation
+  - vision-language models
+  - pseudo-labeling
+  - image classification
+  - edge ml
+license: MIT
+version: "0.1.0"
+date-released: "2026-06-24"
