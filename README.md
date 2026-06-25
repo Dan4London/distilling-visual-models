@@ -78,6 +78,24 @@ python -m vlm_food_distill plot --config configs/subset20.yaml --data-root ./dat
 (The example grid intentionally mixes correct (green) and incorrect (red) teacher
 calls so the pseudo-label noise is visible rather than cherry-picked.)
 
+### A caveat on the "true" labels: Food-101 is noisy
+
+The ground-truth labels come straight from Food-101 (the class folder each image
+was filed under). By design, Food-101's **training** split was *not* cleaned — it
+contains mislabelled and off-topic images — while only the **test** split was
+manually reviewed. The teacher-vs-truth grid above is drawn from the *training*
+split, so several "mismatches" are actually **ground-truth errors, not teacher
+errors** — e.g. a photo of two people filed under `steak`, or a hamburger filed
+under `hot_dog` that the teacher labels correctly. Two consequences worth noting:
+
+- The teacher's real accuracy is **better** than the 93.6% train-agreement figure
+  suggests — that metric penalises the teacher for Food-101's own mistakes.
+- The "oracle" student trains on these noisy labels too, so it isn't a flawless
+  ceiling; this is part of why the distilled and oracle students land so close.
+
+All headline accuracies above are measured on the **cleaned test split**, so they
+remain reliable despite the training-label noise.
+
 ## Pipeline
 
 ```
